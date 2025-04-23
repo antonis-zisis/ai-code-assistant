@@ -20,9 +20,7 @@ export function ChatInput({
   setMessages,
   setPrompt,
 }: ChatInputProps) {
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-
+  const handleSubmit = async () => {
     const trimmedPrompt = prompt.trim();
 
     if (!trimmedPrompt) {
@@ -50,30 +48,29 @@ export function ChatInput({
     }
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+
+      if (!isLoading && prompt.trim()) {
+        handleSubmit();
+      }
+    }
+  };
+
   return (
     <footer className="px-4 py-4 flex justify-center">
       <form
-        onSubmit={handleSubmit}
         className="w-full max-w-3xl flex items-end gap-2"
+        onSubmit={(event) => event.preventDefault()}
       >
         <textarea
           value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Type your message..."
+          onChange={(event) => setPrompt(event.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Type your message and press Enter to send. Shift+Enter for newline."
           className="flex-1 p-3 border border-gray-600 bg-gray-700 text-white rounded resize-none h-20 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-
-        <button
-          type="submit"
-          disabled={!prompt.trim() || isLoading}
-          className={`h-10 px-4 rounded ${
-            !prompt.trim() || isLoading
-              ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 text-white hover:bg-blue-700'
-          }`}
-        >
-          Send
-        </button>
       </form>
     </footer>
   );

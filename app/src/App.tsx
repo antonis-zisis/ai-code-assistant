@@ -7,11 +7,12 @@ import { Loading } from './components/Loading';
 import { parseResponse } from './utils/utils';
 
 export function App() {
+  const [isLoading, setIsLoading] = useState(false);
   const [prompt, setPrompt] = useState('');
   const [messages, setMessages] = useState<
     { sender: 'user' | 'ai'; content: string }[]
   >([]);
-  const [isLoading, setIsLoading] = useState(false);
+
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -24,36 +25,40 @@ export function App() {
 
       <main className="flex-1 overflow-y-auto px-4 py-6 flex justify-center">
         <div className="w-full max-w-3xl space-y-4">
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`flex ${
-                msg.sender === 'user' ? 'justify-end' : 'justify-start'
-              }`}
-            >
+          {messages.length > 0 ? (
+            messages.map((msg, index) => (
               <div
-                className={`p-4 rounded-lg max-w-full whitespace-pre-wrap break-words ${
-                  msg.sender === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-700 text-gray-100'
+                key={index}
+                className={`flex ${
+                  msg.sender === 'user' ? 'justify-end' : 'justify-start'
                 }`}
               >
-                {parseResponse(msg.content).map((block, idx) =>
-                  block.type === 'code' ? (
-                    <CodeBlock
-                      key={idx}
-                      code={block.content}
-                      language="javascript"
-                    />
-                  ) : (
-                    <p key={idx} className="mb-2">
-                      {block.content}
-                    </p>
-                  ),
-                )}
+                <div
+                  className={`p-4 rounded-lg max-w-full whitespace-pre-wrap break-words ${
+                    msg.sender === 'user'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-700 text-gray-100'
+                  }`}
+                >
+                  {parseResponse(msg.content).map((block, idx) =>
+                    block.type === 'code' ? (
+                      <CodeBlock
+                        key={idx}
+                        code={block.content}
+                        language="javascript"
+                      />
+                    ) : (
+                      <p key={idx} className="mb-2">
+                        {block.content}
+                      </p>
+                    ),
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p>Ask me anything!</p>
+          )}
 
           {isLoading ? <Loading /> : null}
 
