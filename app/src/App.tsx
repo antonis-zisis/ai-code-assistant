@@ -68,6 +68,7 @@ export function App() {
 
       <ChatInput
         isLoading={isLoading}
+        messages={messages}
         prompt={prompt}
         setIsLoading={setIsLoading}
         setMessages={setMessages}

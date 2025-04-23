@@ -1,5 +1,11 @@
 import axios from 'axios';
 
+const systemPrompt = {
+  sender: 'system',
+  content:
+    'You are a helpful assistant who answers coding questions clearly and concisely.',
+};
+
 type Message = {
   sender: 'user' | 'ai';
   content: string;
@@ -7,14 +13,16 @@ type Message = {
 
 type ChatInputProps = {
   isLoading: boolean;
+  messages: Array<Message>;
   prompt: string;
   setIsLoading: (arg: boolean) => void;
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  setMessages: React.Dispatch<React.SetStateAction<Array<Message>>>;
   setPrompt: (arg: string) => void;
 };
 
 export function ChatInput({
   isLoading,
+  messages,
   prompt,
   setIsLoading,
   setMessages,
@@ -27,19 +35,26 @@ export function ChatInput({
       return;
     }
 
-    setMessages((prev) => [
-      ...prev,
-      { sender: 'user', content: trimmedPrompt },
-    ]);
+    const newUserMessage = { sender: 'user' as const, content: trimmedPrompt };
+
+    setMessages((prev) => [...prev, newUserMessage]);
     setPrompt('');
     setIsLoading(true);
 
     try {
+      const updatedMessages = [systemPrompt, ...messages, newUserMessage].map(
+        (msg) => ({
+          role: msg.sender === 'ai' ? 'assistant' : msg.sender,
+          content: msg.content,
+        }),
+      );
+
       const res = await axios.post('http://localhost:3001/api/ai', {
-        prompt: trimmedPrompt,
+        messages: updatedMessages,
       });
 
       const aiResponse = res.data.choices[0].message.content;
+
       setMessages((prev) => [...prev, { sender: 'ai', content: aiResponse }]);
     } catch (error) {
       console.error('Error occurred:', error);

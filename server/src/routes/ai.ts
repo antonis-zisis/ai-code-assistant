@@ -3,14 +3,19 @@ import type { FastifyInstance } from 'fastify';
 
 export async function aiRoutes(server: FastifyInstance) {
   server.post('/api/ai', async (request, reply) => {
-    const { prompt } = request.body as { prompt: string };
+    const { messages } = request.body as {
+      messages: Array<{
+        role: 'user' | 'assistant' | 'system';
+        content: string;
+      }>;
+    };
 
     try {
       const response = await axios.post(
         'https://openrouter.ai/api/v1/chat/completions',
         {
-          model: 'gpt-3.5-turbo',
-          messages: [{ role: 'user', content: prompt }],
+          model: 'microsoft/mai-ds-r1:free',
+          messages,
         },
         {
           headers: {
