@@ -4,6 +4,7 @@ import { ChatInput } from './components/ChatInput';
 import { CodeBlock } from './components/CodeBlock';
 import { Header } from './components/Header';
 import { Loading } from './components/Loading';
+import { Markdown } from './components/Markdown';
 import { parseResponse } from './utils/utils';
 
 export function App() {
@@ -34,7 +35,7 @@ export function App() {
                 }`}
               >
                 <div
-                  className={`p-4 rounded-lg max-w-full whitespace-pre-wrap break-words ${
+                  className={`p-4 rounded-lg max-w-full ${
                     msg.sender === 'user'
                       ? 'bg-blue-600 text-white'
                       : 'bg-gray-700 text-gray-100'
@@ -42,15 +43,9 @@ export function App() {
                 >
                   {parseResponse(msg.content).map((block, idx) =>
                     block.type === 'code' ? (
-                      <CodeBlock
-                        key={idx}
-                        code={block.content}
-                        language="javascript"
-                      />
+                      <CodeBlock key={idx} code={block.content} />
                     ) : (
-                      <p key={idx} className="mb-2">
-                        {block.content}
-                      </p>
+                      <Markdown key={idx} content={block.content} />
                     ),
                   )}
                 </div>

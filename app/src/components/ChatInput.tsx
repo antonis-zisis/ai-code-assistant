@@ -2,8 +2,11 @@ import axios from 'axios';
 
 const systemPrompt = {
   sender: 'system',
-  content:
-    'You are a helpful assistant who answers coding questions clearly and concisely.',
+  content: `
+    You are a helpful AI assistant who answers coding questions clearly and
+    concisely. Always respond using Markdown formatting. Use code blocks,
+    bullet points, and other markdown syntax where appropriate.
+  `,
 };
 
 type Message = {
