@@ -1,4 +1,4 @@
-# 🧠 AI Chat App (with Markdown & Code Snippet Support)
+# 🧠 AI Chat App
 
 This is a simple AI assistant app built with:
 
